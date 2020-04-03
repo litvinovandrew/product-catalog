@@ -17,7 +17,7 @@ class ProductSearch extends Product
     public function rules()
     {
         return [
-            [['id', 'status', 'template_id', 'user_id', 'category_id'], 'integer'],
+            [['id', 'status', 'template_id', 'user_id'], 'integer'],
             [['name', 'description', 'slug', 'created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -66,6 +66,8 @@ class ProductSearch extends Product
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+
+        $query->andFilterWhere(['in','category_id',$this->category_id]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description])

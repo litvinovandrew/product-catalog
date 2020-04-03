@@ -7,7 +7,7 @@ $this->title = 'My Yii Application';
 <div class="site-index">
 
     <div class="jumbotron">
-        <h1>Welcome!</h1>
+        <h1>Welcome to Grid view!</h1>
 
     </div>
 
@@ -26,7 +26,13 @@ $this->title = 'My Yii Application';
 
                         'id',
                         'name',
-                        'description:ntext',
+                        [
+                                'attribute' => 'description',
+                            'content' => function($model) {
+                                return substr($model->description,0,100).'...';
+                            }
+                        ],
+//                        'description:ntext',
                         'status',
                         'slug',
                         //'template_id',

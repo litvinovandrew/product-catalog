@@ -2,12 +2,12 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'My Yii Application';
+$this->title = 'Product Catalog';
 ?>
 <div class="site-index">
 
     <div class="jumbotron">
-        <h1>Welcome!</h1>
+        <h1>Results for "<?= $category->name?>" category!</h1>
 
     </div>
 

@@ -15,31 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'name',
-            'description:ntext',
-            'status',
-            'slug',
-            'template_id',
-            'user_id',
-            'category_id',
-            'created_at',
-            'updated_at',
-        ],
-    ]) ?>
+    <?= $this->render('@frontend/views/site/item_card_full', ['model' => $model]); ?>
 
 </div>

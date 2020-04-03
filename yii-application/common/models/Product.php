@@ -27,6 +27,12 @@ use Yii;
  */
 class Product extends \yii\db\ActiveRecord
 {
+
+    public $imageFiles = [];
+    public $imagePaths = [];
+    public $attribute = [];
+    public $attributeValue;
+
     /**
      * {@inheritdoc}
      */
@@ -41,15 +47,17 @@ class Product extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description', 'template_id', 'user_id', 'category_id'], 'required'],
+            [['name', 'description', 'template_id', 'user_id', 'category_id','price','attribute','attributeValue'], 'required'],
             [['description'], 'string'],
             [['status', 'template_id', 'user_id', 'category_id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 255],
             [['slug'], 'string', 'max' => 45],
+            [['user_id'], 'default', 'value' => Yii::$app->user->id],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
             [['template_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductTemplate::className(), 'targetAttribute' => ['template_id' => 'id']],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
+            [['imageFiles'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'maxFiles' => 4],
         ];
     }
 
@@ -69,6 +77,10 @@ class Product extends \yii\db\ActiveRecord
             'category_id' => 'Category ID',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'imageFiles' => 'Files',
+            'price' => 'Price',
+            'attribute' => 'Attribute(s)',
+            'attributeValue' => 'Attribute value',
         ];
     }
 
@@ -130,5 +142,22 @@ class Product extends \yii\db\ActiveRecord
     public function getRatings()
     {
         return $this->hasMany(Rating::className(), ['product_id' => 'id']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function upload()
+    {
+        if ($this->validate()) {
+            foreach ($this->imageFiles as $file) {
+                if ($file->saveAs(Yii::getAlias('@common') . '/uploads/' . $file->baseName . '.' . $file->extension)) {
+                    $this->imagePaths[] =  $file->baseName . '.' . $file->extension;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }

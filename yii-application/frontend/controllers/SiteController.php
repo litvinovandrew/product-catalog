@@ -1,6 +1,10 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\Category;
+use common\models\Product;
+use common\models\search\ProductSearch;
+use frontend\helpers\CategoryHelper;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -40,6 +44,10 @@ class SiteController extends Controller
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+                    [
+                        'actions' => ['view', 'show-category'],
+                        'allow' => true,
+                    ],
                 ],
             ],
             'verbs' => [
@@ -74,7 +82,85 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+
+        // prepare products search
+        $searchModel = new ProductSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+
+        return $this->render('index',[
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays homepage.
+     *
+     * @return mixed
+     */
+    public function actionShowCategory($id)
+    {
+
+        $category =  Category::find()->where(['id' => $id])->one();
+
+        //1 get all categories that related to the current category
+        $all = CategoryHelper::getChildrenFor(CategoryHelper::getChilds($category),$category->id);
+        $ids = [];
+        $ids[] = $category->id;
+        foreach ($all as $childCategory) {
+            $ids[] = $childCategory->id;
+        }
+
+
+        //2 get parent category name
+
+
+        //3 get all products related to the curent category
+
+        //4 get all products related to the sub categories
+
+        $searchModel = new ProductSearch();
+        $searchModel->category_id = $ids;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+
+        return $this->render('category',[
+            'category' => $category,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays a single Product model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionView($id)
+    {
+        return $this->render('view', [
+            'model' => Product::find()->where(['id' => $id])->one(),
+        ]);
+    }
+
+    /**
+     * Displays a single Product model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionGrid()
+    {
+        $searchModel = new ProductSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+
+        return $this->render('grid',[
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**

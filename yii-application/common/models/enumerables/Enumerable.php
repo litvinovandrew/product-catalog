@@ -1,6 +1,6 @@
 <?php
 
-namespace yiicod\base\models\enumerables\base;
+namespace common\models\enumerables;
 
 /**
  * Enumerable is the base class for all enumerable types.

@@ -2,12 +2,15 @@
 
 namespace backend\controllers;
 
+use common\models\ProductAttribute;
+use common\models\ProductImage;
 use Yii;
 use common\models\Product;
 use common\models\search\ProductSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * ProductController implements the CRUD actions for Product model.
@@ -65,8 +68,29 @@ class ProductController extends Controller
     public function actionCreate()
     {
         $model = new Product();
+        $model->user_id =  Yii::$app->user->getId();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $model->imageFiles = UploadedFile::getInstances($model, 'imageFiles');
+            if ($model->upload()) {
+                // file is uploaded successfully
+                //add new relationship
+                foreach ($model->imagePaths as $path) {
+                    $fileRelationship = new ProductImage();
+                    $fileRelationship->product_id = $model->id;
+                    $fileRelationship->path = $path;
+                    $fileRelationship->save();
+                }
+
+            }
+
+            if($model->attributeValue && $model->attribute) {
+                $attrRelation = new ProductAttribute();
+                $attrRelation->product_id = $model->id;
+                $attrRelation->attribute_id = $model->attribute;
+                $attrRelation->attribute_value = $model->attributeValue;
+                $attrRelation->save();
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -87,6 +111,15 @@ class ProductController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            if($model->attributeValue && $model->attribute) {
+                $attrRelation = new ProductAttribute();
+                $attrRelation->product_id = $model->id;
+                $attrRelation->attribute_id = $model->attribute;
+                $attrRelation->attribute_value = $model->attributeValue;
+                $attrRelation->save();
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

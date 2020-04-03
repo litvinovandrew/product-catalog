@@ -57,6 +57,6 @@ class Attribute extends \yii\db\ActiveRecord
      */
     public function getProductAttributes()
     {
-        return $this->hasMany(ProductAttributes::className(), ['attribute_id' => 'id']);
+        return $this->hasMany(ProductAttribute::className(), ['attribute_id' => 'id']);
     }
 }
