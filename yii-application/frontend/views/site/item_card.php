@@ -7,9 +7,11 @@
     </div>
     <div class="row">
         <div class="col-md-6 col-lg-6 col-xs-12">
+            <div class="thumbnail">
             <?php if ($model->productImages) : ?>
-                <img class="card_image" src="<?= '/uploads/'. $model->productImages[0]->path; ?>">
+                <img  class="" alt="Responsive image" src="<?= '/uploads/'. $model->productImages[0]->path; ?>">
             <?php endif ?>
+            </div>
         </div>
         <div class="col-md-6">
             <p><?= substr($model->description,0,200).'...' ?></p>

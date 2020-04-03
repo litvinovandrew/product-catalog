@@ -138,3 +138,9 @@ a.desc:after {
 a.product_title {
     font-size: larger;
 }
+
+.fit-image{
+    width: 100%;
+    object-fit: cover;
+    /*height: 300px; !* only if you want fixed height *!*/
+}
